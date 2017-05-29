@@ -28,29 +28,31 @@ class WeatherVC : UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.dataSource = self
         
         currentWeather = CurrentWeather()
-        currentWeather.downloadWeatherDetails {
-            self.updateMainUI()
-        }
         forecasts = Forecasts()
-        forecasts.downloadForecastData {
-            // update UI
+        currentWeather.downloadWeatherDetails {
+            self.forecasts.downloadForecastData {
+                self.updateMainUI()
+            }
         }
     }
-    
-    
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        return forecasts.forecasts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath)
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath) as? WeatherCell {
+            let forecast = forecasts.forecasts[indexPath.row]
+            cell.configureCell(forecast: forecast)
+            return cell
+        } else {
+            return WeatherCell()
+        }
         
-        return cell
     }
     
     func updateMainUI() {
@@ -59,6 +61,7 @@ class WeatherVC : UIViewController, UITableViewDelegate, UITableViewDataSource {
         currentWeatherTypeLabel.text = currentWeather.weatherType
         currentLocationLabel.text = currentWeather.cityName
         currentWeatherImage.image = UIImage(named: currentWeather.weatherType)
+        tableView.reloadData()
     }
     
 }
