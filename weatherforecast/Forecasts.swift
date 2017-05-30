@@ -25,6 +25,7 @@ class Forecasts {
     
     func downloadForecastData(completed: @escaping DownloadComplete) {
         let forecastUrl = URL(string: CURRENT_FORECAST_URL)!
+        print(forecastUrl)
         Alamofire.request(forecastUrl).responseJSON { response in
             let result = response.result
             if let dict = result.value as? Dictionary<String, Any> {
@@ -33,6 +34,7 @@ class Forecasts {
                         let forecast = Forecast(weatherDict: obj)
                         self._forecasts.append(forecast)
                     }
+                    self._forecasts.remove(at: 0) // remove first index!
                 }
             }
             completed()

@@ -36,7 +36,6 @@ class CurrentWeather {
     }
     
     var weatherType: String {
-        print("Weather type: \(_weatherType)")
         if _weatherType == nil {
             _weatherType =  ""
         }
@@ -53,6 +52,7 @@ class CurrentWeather {
     func downloadWeatherDetails(completed: @escaping DownloadComplete) {
         // Almofire Download
         let currentWeatherURL = URL(string: CURRENT_WEATHER_URL)!
+        print(currentWeatherURL)
         Alamofire.request(currentWeatherURL).responseJSON { response in
             let result = response.result
             if let dict = result.value as? Dictionary<String, AnyObject> {
@@ -64,7 +64,6 @@ class CurrentWeather {
                 if let weather = dict["weather"] as? [Dictionary<String, AnyObject>] {
                     if let main = weather[0]["main"] as? String {
                         self._weatherType = main.capitalized
-                        print(self._weatherType)
                     }
                 }
                 
